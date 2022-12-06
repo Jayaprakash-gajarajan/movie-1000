@@ -19,6 +19,12 @@ import Toolbar from '@mui/material/Toolbar';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import Paper from '@mui/material/Paper';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+
+
 const MOVIE = [
   {
     "id": "99",
@@ -97,33 +103,48 @@ const MOVIE = [
 function App() {
   const [movieList, setMovieList] = useState(MOVIE)
   const navigate = useNavigate();
+  const [mode, setMode] = useState("light")
+  const darkTheme = createTheme({
+    palette: {
+      mode: mode,
+    },
+  });
+  fetch("https://638cafbcd2fc4a058a5d556b.mockapi.io/movie").then((data) => data.json()).then((data1) => console.log(data1))
   return (
-    <div className="App">
-      <AppBar position="static">
-        <Toolbar>
-          <Button color="inherit" onClick={() => navigate("/")}>Home</Button>
-          <Button color="inherit" onClick={() => navigate("/movies")}>Movie</Button>
-          <Button color="inherit" onClick={() => navigate("/add-movie")}>Add Movie</Button>
-          <Button color="inherit" onClick={() => navigate("/color")}>Color Game</Button>
-        </Toolbar>
-      </AppBar>
+    <ThemeProvider theme={darkTheme}>
+      <Paper elevation={8} >
+        <div className="App">
+          <AppBar position="static">
+            <Toolbar>
+              <Button color="inherit" onClick={() => navigate("/")}>Home</Button>
+              <Button color="inherit" onClick={() => navigate("/movies")}>Movie</Button>
+              <Button color="inherit" onClick={() => navigate("/add-movie")}>Add Movie</Button>
+              <Button color="inherit" onClick={() => navigate("/color")}>Color Game</Button>
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        {/* <Route path="/flims" element={<Navigate replace to="/movies" />} /> */}
-        <Route path="/add-movie" element={<AddMovie movieList={movieList} setMovieList={setMovieList} />} />
-        <Route path="/movies" element={<MovieList movieList={movieList} setMovieList={setMovieList} />} />
-        <Route path="/color" element={<AddColor />} />
-        <Route path="/movies/:id" element={<MovieDetail movieList={movieList} />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </div>
+              <Button color="inherit" startIcon={mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+                onClick={() => setMode(mode === "light" ? "dark" : "light")}>Dark Mode</Button>
+
+            </Toolbar>
+          </AppBar>
+
+          <Routes>
+            <Route path="/" element={<Home />} />
+            {/* <Route path="/flims" element={<Navigate replace to="/movies" />} /> */}
+            <Route path="/add-movie" element={<AddMovie movieList={movieList} setMovieList={setMovieList} />} />
+            <Route path="/movies" element={<MovieList movieList={movieList} setMovieList={setMovieList} />} />
+            <Route path="/color" element={<AddColor />} />
+            <Route path="/movies/:id" element={<MovieDetail movieList={movieList} />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </div>
+      </Paper>
+    </ThemeProvider>
   );
 }
 function Home() {
   return (
-    <div>
-      Welcome
+    <div className='home'>
+      Welcome to the App
     </div>
   )
 }
@@ -259,13 +280,13 @@ function AddColor() {
   );
   // let colorList = ["crimson", "orangered", "orange", "red"]
   return (
-    <div>
+    <div className='color'>
       <input type="text" style={styles}
         placeholder="enter the color"
         onChange={(event) => setColor(event.target.value)}
         value={color} />
       <button onClick={() => setColorList([...colorList, color])}>Add Color</button>
-      {colorList.map((ele) => (<ColorPox color={ele} />))}
+      {colorList.map((ele, key) => (<ColorPox color={ele} index={key} />))}
     </div>
   );
 }

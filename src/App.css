@@ -10,6 +10,14 @@
   padding: 16px;
 }
 
+.home {
+  height: 100vh;
+  font-weight: bold;
+  font-size: 40px;
+  text-align: center;
+  margin-top: 40px;
+}
+
 .movie__container {
 
   width: 340px;
@@ -23,6 +31,12 @@
   height: 640px;
   width: 100%;
   object-fit: cover;
+}
+
+.color {
+  height: 100vh;
+  margin-top: 40px;
+
 }
 
 .movie__specs {
@@ -43,6 +57,7 @@
 }
 
 .add-movie-form {
+  height: 100vh;
   display: flex;
   flex-direction: column;
   width: 350px;
