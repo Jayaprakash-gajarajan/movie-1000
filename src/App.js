@@ -194,13 +194,13 @@ function MovieList() {
     <div>
       <div className='movie__list'>
         {movieList.map((mv) => (
-          <div key={mv.id}>
+          <div key={mv._id}>
             <Movie movie={mv}
-              id={mv.id}
+              id={mv._id}
               editButton={
-                <IconButton style={st} color='secondary' onClick={() => navigate(`movies/edit/${mv.id}`)}><EditIcon /></IconButton>}
+                <IconButton style={st} color='secondary' onClick={() => navigate(`movies/edit/${mv._id}`)}><EditIcon /></IconButton>}
               deleteButton={
-                <IconButton style={st} color='error' onClick={() => deleteMovie(mv.id)}><DeleteIcon /></IconButton>}
+                <IconButton style={st} color='error' onClick={() => deleteMovie(mv._id)}><DeleteIcon /></IconButton>}
             />
           </div>
         ))}
