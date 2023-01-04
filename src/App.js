@@ -1,8 +1,8 @@
 import logo from './logo.svg';
 import './App.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, TextField } from '@mui/material';
-import { Add, AirlineSeatReclineNormalRounded } from '@mui/icons-material';
+import { Add, AirlineSeatReclineNormalRounded, YouTube } from '@mui/icons-material';
 import { height } from '@mui/system';
 import { ColorBox } from './ColorBox';
 import { IconButton } from "@mui/material";
@@ -23,8 +23,11 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
-
-
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
+import { API } from './global';
 const MOVIE = [
   {
     "id": "99",
@@ -109,10 +112,13 @@ function App() {
       mode: mode,
     },
   });
-  fetch("https://638cafbcd2fc4a058a5d556b.mockapi.io/movie").then((data) => data.json()).then((data1) => console.log(data1))
+  const dk = {
+    marginLeft: "auto"
+  }
+
   return (
     <ThemeProvider theme={darkTheme}>
-      <Paper elevation={8} >
+      <Paper elevation={8} style={{ minHeight: "100vh" }}>
         <div className="App">
           <AppBar position="static">
             <Toolbar>
@@ -121,7 +127,7 @@ function App() {
               <Button color="inherit" onClick={() => navigate("/add-movie")}>Add Movie</Button>
               <Button color="inherit" onClick={() => navigate("/color")}>Color Game</Button>
 
-              <Button color="inherit" startIcon={mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+              <Button style={dk} color="inherit" startIcon={mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
                 onClick={() => setMode(mode === "light" ? "dark" : "light")}>Dark Mode</Button>
 
             </Toolbar>
@@ -130,16 +136,24 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             {/* <Route path="/flims" element={<Navigate replace to="/movies" />} /> */}
-            <Route path="/add-movie" element={<AddMovie movieList={movieList} setMovieList={setMovieList} />} />
-            <Route path="/movies" element={<MovieList movieList={movieList} setMovieList={setMovieList} />} />
+            <Route path="/add-movie" element={<AddMovie />} />
+            <Route path="/movies" element={<MovieList />} />
             <Route path="/color" element={<AddColor />} />
-            <Route path="/movies/:id" element={<MovieDetail movieList={movieList} />} />
+            <Route path="/movies/:id" element={<MovieDetail />} />
+            <Route path=" /edit/:id" element={<Edit />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
       </Paper>
-    </ThemeProvider>
+    </ThemeProvider >
   );
+}
+function Edit() {
+  return (
+    <div>
+      <h1>Here you can edit the movie</h1>
+    </div>
+  )
 }
 function Home() {
   return (
@@ -153,29 +167,62 @@ function NotFound() {
     <div>404 not found</div>
   )
 }
-// function 
-function MovieList({ movieList }) {
+// function declaration
+function MovieList() {
+  const [movieList, setMovieList] = useState([]);
+  const getMovies = () => {
+    fetch(`${API}/movies`, {
+      method: "GET",
+    })
+      .then((data) => data.json())
+      .then((msv) => setMovieList(msv));
 
+  };
+  useEffect(() => getMovies(), [])
+  const st = {
+    marginLeft: "auto"
+  }
+
+  const deleteMovie = (id) => {
+    fetch(`${API}/movie/${id}`, {
+      method: "DELETE",
+    }).then((data) => getMovies());
+    console.log(id);
+  };
+  const navigate = useNavigate();
   return (
     <div>
       <div className='movie__list'>
-        {movieList.map((mv, index) => (
-          <div key={index}>
-            <Movie movie={mv} id={index} />
+        {movieList.map((mv) => (
+          <div key={mv.id}>
+            <Movie movie={mv}
+              id={mv.id}
+              editButton={
+                <IconButton style={st} color='secondary' onClick={() => navigate(`movies/edit/${mv.id}`)}><EditIcon /></IconButton>}
+              deleteButton={
+                <IconButton style={st} color='error' onClick={() => deleteMovie(mv.id)}><DeleteIcon /></IconButton>}
+            />
           </div>
         ))}
       </div>
     </div>
   );
 }
-function MovieDetail({ movieList }) {
+function MovieDetail() {
+  const [movie, SetMovie] = useState([]);
   const navigate = useNavigate();
   const { id } = useParams();
-  const movie = movieList[id];
   const rating = {
     color: movie.rating > 8 ? "green" : "red"
   }
-
+  useEffect(() => {
+    fetch(`${API}/movie/${id}`, {
+      method: "GET",
+    })
+      .then((data) => data.json())
+      .then((mv) => SetMovie(mv))
+  }, []);
+  console.log(movie);
   return (
     <div>
       <iframe width="100%"
@@ -218,7 +265,7 @@ function Count() {
         <Badge badgeContent={like} color="primary">
           👍
         </Badge>
-      </IconButton>
+      </IconButton>{"    "}
       <IconButton color="primary" aria-label="add to shopping cart" onClick={b}>
         <Badge badgeContent={disLike} color="error">
           👎
@@ -229,7 +276,7 @@ function Count() {
     </div>
   )
 }
-function Movie({ movie, id }) {
+function Movie({ movie, id, deleteButton, editButton }) {
   const [show, setShow] = useState(true);
   const rating = {
     color: movie.rating > 8 ? "green" : "red"
@@ -253,7 +300,8 @@ function Movie({ movie, id }) {
         {show ? <p className='movie__summary'>{movie.summary}</p> : null}
       </CardContent>
       <CardActions>
-        <Count />
+        <Count />{editButton}{deleteButton}
+
       </CardActions>
 
 
@@ -290,36 +338,99 @@ function AddColor() {
     </div>
   );
 }
+const movieValidationShema = yup.object({
+  name: yup.string().required(),
+  poster: yup.string().required().min(4),
+  rating: yup.number().required().min(0).max(10),
+  summary: yup.string().required().max(20),
+  trailer: yup.string().required().min(4).url(),
+})
 
+function AddMovie() {
+  const { handleSubmit, values, handleChange, handleBlur, touched, errors } =
+    useFormik({
+      initialValues: {
+        name: "",
+        poster: "",
+        rating: "",
+        summary: "",
+        trailer: "",
+      },
+      validationSchema: movieValidationShema,
+      onSubmit: (newMovie) => {
+        console.log("Form values:", newMovie);
+        addMovie(newMovie);
+      },
+    });
+  const navigate = useNavigate();
+  const addMovie = (newMovie) => {
+    //   const newMovie = {
+    //     name: name,
+    //     poster: poster,
+    //     rating: rating,
+    //     summary: summary,
+    //     trailer: trailer,
+    //   };
+    fetch(`${API}/movie`, {
+      method: "POST",
+      body: JSON.stringify(newMovie),
+      headers: { "content-type": "application/json" }
+    }).then(() => navigate("/movies"))
 
-function AddMovie({ movieList, setMovieList }) {
-  const [name, setName] = useState("");
-  const [poster, setPoster] = useState("");
-  const [rating, setRating] = useState("");
-  const [summary, setSummary] = useState("");
-  const addMovie = () => {
-    const newMovie = {
-      name: name,
-      poster: poster,
-      rating: rating,
-      summary: summary,
-    };
-
-    setMovieList([...movieList, newMovie])
-    console.log(newMovie);
-  }
+    //   // setMovieList([...movieList, newMovie])
+    //   // console.log(newMovie);
+  };
   return (
-    <div className='add-movie-form'>
-      <TextField label="name" variant='outlined' onChange={(event) =>
-        setName(event.target.value)} />
-      <TextField label="poster" variant='outlined' onChange={(event) =>
-        setPoster(event.target.value)} />
-      <TextField label="rating" variant='outlined' onChange={(event) =>
-        setRating(event.target.value)} />
-      <TextField label="summary" variant='outlined' onChange={(event) =>
-        setSummary(event.target.value)} />
-      <Button variant='contained' onClick={addMovie}>Add Movie</Button>
-    </div>
+    <form onSubmit={handleSubmit} className='add-movie-form'>
+      <TextField
+        label="name"
+        variant='outlined'
+        name="name"
+        value={values.name}
+        onChange={handleChange}onBlur={handleBlur}
+      />
+      {touched.name && errors.name ? errors.name : null}
+      <TextField
+        label="poster"
+        variant='outlined'
+        name="poster"
+        value={values.poster}
+        onChange={handleChange}
+        onBlur={handleBlur}
+      />
+      {touched.poster && errors.poster ? errors.poster : null}
+
+      <TextField
+        label="rating"
+        variant='outlined'
+        name="rating"
+        value={values.rating}
+        onChange={handleChange}
+        onBlur={handleBlur}
+      />
+      {touched.rating && errors.rating ? errors.rating : null}
+
+      <TextField
+        label="summary"
+        variant='outlined'
+        name="summary"
+        value={values.summary}
+        onChange={handleChange}
+        onBlur={handleBlur}
+      />
+      {touched.summary && errors.summary ? errors.summary : null}
+      <TextField
+        label="trailer"
+        variant='outlined'
+        value={values.trailer}
+        name="trailer"
+        onChange={handleChange}
+        onBlur={handleBlur}
+      />
+      {touched.trailer && errors.trailer ? errors.trailer : null}
+
+      <Button type="submit" variant='contained'>Add Movie</Button>
+    </form>
   )
 }
 
