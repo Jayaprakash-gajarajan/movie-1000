@@ -184,7 +184,7 @@ function MovieList() {
   }
 
   const deleteMovie = (id) => {
-    fetch(`${API}/movie/${id}`, {
+    fetch(`${API}/movies/${id}`, {
       method: "DELETE",
     }).then((data) => getMovies());
     console.log(id);
@@ -216,7 +216,7 @@ function MovieDetail() {
     color: movie.rating > 8 ? "green" : "red"
   }
   useEffect(() => {
-    fetch(`${API}/movie/${id}`, {
+    fetch(`${API}/movies/${id}`, {
       method: "GET",
     })
       .then((data) => data.json())
@@ -228,7 +228,7 @@ function MovieDetail() {
       <iframe width="100%"
         height="600"
         src={movie.trailer}
-        title="Avatar: The Way of Water | New Tamil Trailer | December 16 in Cinemas | Advance Bookings Open Now"
+        title={movie.title}
         frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowfullscreen></iframe>
       <div className='movie-detail-container'>
