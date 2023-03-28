@@ -242,7 +242,6 @@ function MovieDetail() {
           <Button variant="contained"
             onClick={() => navigate(-1)}
           > <KeyboardBackspaceIcon />Back</Button>
-
         </Stack>
       </div>
     </div>
