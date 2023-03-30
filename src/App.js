@@ -26,6 +26,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { API } from './global';
+import axios from 'axios';
 const MOVIE = [
   {
     "id": "99",
@@ -171,6 +172,7 @@ function NotFound() {
 }
 // function declaration
 function MovieList() {
+  const roleId=localStorage.getItem("roleId")
   const [movieList, setMovieList] = useState([]);
   const getMovies = () => {
     fetch(`${API}/movies`, {
@@ -191,6 +193,11 @@ function MovieList() {
     }).then((data) => getMovies());
     console.log(id);
   };
+  // const deleteMovie = async (id) => {
+  //   await axios.delete(`${API}/movies/${id}`)
+  //   console.log(id);
+  //   getMovies();
+  // }
   const navigate = useNavigate();
   return (
     <div>
@@ -279,6 +286,7 @@ function Count() {
 }
 function Movie({ movie, id, deleteButton, editButton }) {
   const [show, setShow] = useState(true);
+  // const roleId=localStorage.getItem("roleId")
   const rating = {
     color: movie.rating > 8 ? "green" : "red"
   }
