@@ -9,7 +9,13 @@
   max-width: 750px;
   padding: 16px;
 }
-
+.login-form,.logout{
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 400px;
+  margin: 0 auto ;
+}
 .home {
   height: 100vh;
   font-weight: bold;

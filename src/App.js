@@ -2,14 +2,12 @@ import logo from './logo.svg';
 import './App.css';
 import { useEffect, useState } from 'react';
 import { Button, TextField } from '@mui/material';
-import { Add, AirlineSeatReclineNormalRounded, YouTube } from '@mui/icons-material';
-import { height } from '@mui/system';
+import { Navigate } from 'react-router-dom';
 import { ColorBox } from './ColorBox';
 import { IconButton } from "@mui/material";
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Badge from '@mui/material/Badge';
-import MailIcon from '@mui/icons-material/Mail';
 import { Routes, Route, Link, Router, useNavigate, useParams } from "react-router-dom";
 import InfoIcon from '@mui/icons-material/Info';
 import Stack from '@mui/material/Stack';
@@ -126,10 +124,9 @@ function App() {
               <Button color="inherit" onClick={() => navigate("/movies")}>Movie</Button>
               <Button color="inherit" onClick={() => navigate("/add-movie")}>Add Movie</Button>
               <Button color="inherit" onClick={() => navigate("/color")}>Color Game</Button>
-
               <Button style={dk} color="inherit" startIcon={mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
                 onClick={() => setMode(mode === "light" ? "dark" : "light")}>Dark Mode</Button>
-
+              <Button color="inherit" onClick={() => navigate("/login")}>LOGIN</Button>
             </Toolbar>
           </AppBar>
 
@@ -138,10 +135,15 @@ function App() {
             {/* <Route path="/flims" element={<Navigate replace to="/movies" />} /> */}
             <Route path="/add-movie" element={<AddMovie />} />
             <Route path="/movies" element={<MovieList />} />
-            <Route path="/color" element={<AddColor />} />
+            <Route path="/color" element={
+            <ProdectedRoute>
+            <AddColor />
+            </ProdectedRoute>
+            } />
             <Route path="/movies/:id" element={<MovieDetail />} />
             <Route path=" /edit/:id" element={<Edit />} />
             <Route path="*" element={<NotFound />} />
+            <Route path='/login' element={<Login/>}></Route>
           </Routes>
         </div>
       </Paper>
@@ -316,7 +318,7 @@ function ColorPox({ color }) {
   </div>)
 }
 function AddColor() {
-
+  const roleId=localStorage.getItem("roleId")
   let [color, setColor] = useState("");
   let styles = {
     background: color,
@@ -328,6 +330,7 @@ function AddColor() {
   // let colorList = ["crimson", "orangered", "orange", "red"]
   return (
     <div className='color'>
+      { roleId==0?(<h1>Welcome Admin</h1>):(<h1>Hello Client</h1>)}
       <input type="text" style={styles}
         placeholder="enter the color"
         onChange={(event) => setColor(event.target.value)}
@@ -370,7 +373,7 @@ function AddMovie() {
     //     summary: summary,
     //     trailer: trailer,
     //   };
-    fetch(`${API}/movie`, {
+    fetch(`${API}/movies`, {
       method: "POST",
       body: JSON.stringify(newMovie),
       headers: { "content-type": "application/json" }
@@ -428,9 +431,90 @@ function AddMovie() {
       />
       {touched.trailer && errors.trailer ? errors.trailer : null}
 
-      <Button type="submit" variant='contained'>Add Movie</Button>
+      <Button type="submit" variant='contained' onClick={addMovie}>Add Movie</Button>
     </form>
   )
 }
+function Login() {
+  const [formState,setFormState]=useState("success");
+  const navigate=useNavigate();
+  const {handleChange,values,handleSubmit}=useFormik({
+      initialValues:{username:"prakash",password:"123"},
+      onSubmit:async(values)=>{
+          console.log(values);
+       const data = await fetch(API+"/"+"login",{
+              method:"POST",
+              headers:{
+                  "Content-type":"application/json"
+              },
+              body:JSON.stringify(values),
+          });
+          if(data.status==401){
+              console.log("error");
+              setFormState("error")
+          }
+          else{
+              const result= await data.json()
+              console.log("success",result);
+              localStorage.setItem("token",result.token)
+              localStorage.setItem("roleId",result.roleId)
+              navigate("/color")
+          }
+        
+      },
+});
+return (
+  <div>
+     <form onSubmit={handleSubmit} className="login-form" >
+              <h2>Login</h2>
+          <TextField 
+          id="outlined-basic" 
+          label="Username"
+           variant="outlined"
+           onChange={handleChange} 
+           value={values.username}
+           name="username"
+           /> 
+
+         <TextField id="outlined-basic"
+          label="Password" 
+          variant="outlined" 
+          onChange={handleChange} 
+          value={values.password}
+          name="password"
+          />   
+
+          <Button  color={formState}
+          type="submit" variant="contained">
+              {formState ==="error"?"Retry":"Submit"}
+              </Button>
+          </form>
+          <div className='logout'>
+          <Button onClick={()=>logout()}>logout</Button>
+          </div>
+      </div>
+)
+}
+function logout() {
+  localStorage.removeItem("token")
+  window.location.href = "/";
+
+}
+function checkAuth(data) {
+  if (data.status === 401) {
+    console.log("Unauthorized")
+    throw Error("Unauthorized")
+  }
+  else {
+    return data.json();
+  }
+}
+ function ProdectedRoute({ children }) {
+  const isAuth = localStorage.getItem("token");
+  console.log(isAuth)
+  return isAuth ? children : <Navigate replace to={"/"} />
+}
+
+ 
 
 export default App;
