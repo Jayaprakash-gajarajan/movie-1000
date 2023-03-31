@@ -28,6 +28,7 @@ import * as yup from 'yup';
 import Signin from './Signin';
 import { API } from './global';
 import axios from 'axios';
+import { API_URL } from './global';
 const MOVIE = [
   {
     "id": "99",
@@ -175,10 +176,10 @@ function NotFound() {
 }
 // function declaration
 function MovieList() {
-  const roleId=localStorage.getItem("roleId")
+  // const roleId=localStorage.getItem("roleId")
   const [movieList, setMovieList] = useState([]);
   const getMovies = () => {
-    fetch(`${API}/movies`, {
+    fetch(`${API_URL}`, {
       method: "GET",
     })
       .then((data) => data.json())
@@ -191,7 +192,7 @@ function MovieList() {
   }
 
   const deleteMovie = (id) => {
-    fetch(`${API}/movies/${id}`, {
+    fetch(`${API_URL}/${id}`, {
       method: "DELETE",
     }).then((data) => getMovies());
     console.log(id);
@@ -212,7 +213,7 @@ function MovieList() {
               editButton={
                 <IconButton style={st} color='secondary' onClick={() => navigate(`movies/edit/${mv._id}`)}><EditIcon /></IconButton>}
               deleteButton={
-                <IconButton style={st} color='error' onClick={() => deleteMovie(mv._id)}><DeleteIcon /></IconButton>}
+                <IconButton style={st} color='error' onClick={() => deleteMovie(mv.id)}><DeleteIcon /></IconButton>}
             />
           </div>
         ))}
@@ -228,7 +229,7 @@ function MovieDetail() {
     color: movie.rating > 8 ? "green" : "red"
   }
   useEffect(() => {
-    fetch(`${API}/movies/${id}`, {
+    fetch(`${API_URL}/${id}`, {
       method: "GET",
     })
       .then((data) => data.json())
@@ -384,10 +385,10 @@ function AddMovie() {
     //     summary: summary,
     //     trailer: trailer,
     //   };
-    fetch(`${API}/movies`, {
+    fetch(`${API_URL}`, {
       method: "POST",
       body: JSON.stringify(newMovie),
-      headers: { "content-type": "application/json" }
+      headers: { "Content-type": "application/json" }
     }).then(() => navigate("/movies"))
 
     //   // setMovieList([...movieList, newMovie])
@@ -447,67 +448,7 @@ function AddMovie() {
   )
 }
 
-// function Signin() {
-//   const [formState,setFormState]=useState("success");
-//   const navigate=useNavigate();
-//   const {handleChange,values,handleSubmit,handleBlur, touched, errors}=useFormik({
-//       initialValues:{username:"",password:""},
-//       validationSchema: movieValidationShema,
-//       onSubmit:async(values)=>{
-//           console.log(values);
-//        const data = await fetch(API+"/"+"signup",{
-//               method:"POST",
-//               headers:{
-//                   "Content-type":"application/json"
-//               },
-//               body:JSON.stringify(values),
-//           });
-//           if(data.status==401){
-//               console.log("username already exist");
-//               setFormState("error")
-              
-//           }
-//           else{
-//               const result= await data.json()
-//               console.log("success",result);
-//               localStorage.setItem("token",result.token)
-//               localStorage.setItem("roleId",result.roleId)
-//               navigate("/login")
-//           }
-        
-//       },
-// });
-// return (
-//   <div>
-//     <form onSubmit={handleSubmit} className="login-form" >
-//               <h2>Sign in</h2>
-//           <TextField 
-//           id="outlined-basic" 
-//           label="Username"
-//            variant="outlined"
-//            onChange={handleChange} 
-//            onBlur={handleBlur}
-//            value={values.username}
-//            name="username"
-//            /> 
-// {touched.username && errors.username ? errors.username : null}
-//          <TextField id="outlined-basic"
-//           label="Password" 
-//           variant="outlined" 
-//           onChange={handleChange} 
-//           value={values.password}
-//           onBlur={handleBlur}
-//           name="password"
-//           />   
-// {touched.password && errors.password ? errors.password : null}
-//           <Button  color={formState}
-//           type="submit" variant="contained">
-//               {formState ==="error"?"Retry":"Sign in"}
-//               </Button>
-//           </form>
-//   </div>
-// )
-// }
+
 function Login() {
   const [formState,setFormState]=useState("success");
   const navigate=useNavigate();
