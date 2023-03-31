@@ -304,7 +304,7 @@ function Movie({ movie, id, deleteButton, editButton }) {
             <IconButton color="primary" aria-label="add to shopping cart" onClick={() => setShow(!show)}>
               {show ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </IconButton>
-            <IconButton color="primary" aria-label="add to shopping cart" onClick={() => navigate(`/movies/${id}`)}>
+            <IconButton color="primary" aria-label="add to shopping cart" onClick={() => navigate(`/movies/${movie.id}`)}>
               <InfoIcon />
             </IconButton>
           </h2>
