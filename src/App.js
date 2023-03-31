@@ -313,7 +313,7 @@ function Movie({ movie, id, deleteButton, editButton }) {
         {show ? <p className='movie__summary'>{movie.summary}</p> : null}
       </CardContent>
       <CardActions>
-        <Count />{editButton}{deleteButton}
+        <Count />{deleteButton}
 
       </CardActions>
 
