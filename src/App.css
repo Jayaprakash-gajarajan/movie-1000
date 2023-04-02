@@ -40,9 +40,9 @@
 }
 
 .color {
-  height: 100vh;
+  margin: 460px;
+  height: 140vh;
   margin-top: 40px;
-
 }
 
 .movie__specs {
