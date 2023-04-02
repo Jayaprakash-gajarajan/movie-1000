@@ -106,6 +106,7 @@ const MOVIE = [
 ]
 function App() {
   const [movieList, setMovieList] = useState(MOVIE)
+  const roleId=localStorage.getItem("roleId");
   const navigate = useNavigate();
   const [mode, setMode] = useState("light")
   const darkTheme = createTheme({
@@ -125,12 +126,12 @@ function App() {
             <Toolbar>
               <Button color="inherit" onClick={() => navigate("/")}>Home</Button>
               <Button color="inherit" onClick={() => navigate("/movies")}>Movie</Button>
-              <Button color="inherit" onClick={() => navigate("/add-movie")}>Add Movie</Button>
-              <Button color="inherit" onClick={() => navigate("/update/:id")}>Edit Movie</Button>
+              {roleId==0?<Button color="inherit" onClick={() => navigate("/add-movie")}>Add Movie</Button>:null}
+              {roleId==0?<Button color="inherit" onClick={() => navigate("/update/:id")}>Edit Movie</Button>:null}
               <Button color="inherit" onClick={() => navigate("/color")}>Color Game</Button>
               <Button style={dk} color="inherit" startIcon={mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
                 onClick={() => setMode(mode === "light" ? "dark" : "light")}>Dark Mode</Button>
-            <Button color="inherit" onClick={() => navigate("/signup")}>Signup</Button>  
+          <Button color="inherit" onClick={() => navigate("/signup")}>Signup</Button>
               <Button color="inherit" onClick={() => navigate("/login")}>Login</Button>
             </Toolbar>
           </AppBar>
@@ -142,7 +143,11 @@ function App() {
               <ProdectedRoute>
               <AddMovie />
               </ProdectedRoute>} />
-            <Route path="/movies" element={<MovieList />} />
+            <Route path="/movies" element={
+            <ProdectedRoute>
+            <MovieList />
+            </ProdectedRoute>
+            } />
             <Route path="/color" element={
             <AddColor />
             } />
@@ -571,7 +576,7 @@ function Login() {
               console.log("success",result);
               localStorage.setItem("token",result.token)
               localStorage.setItem("roleId",result.roleId)
-              navigate("/add-movie")
+              navigate("/movies")
           }
         
       },
