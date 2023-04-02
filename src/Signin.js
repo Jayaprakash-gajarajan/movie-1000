@@ -42,7 +42,7 @@ const movieValidationShema = yup.object({
   return (
     <div>
       <form onSubmit={handleSubmit} className="login-form" >
-                <h2>Sign in</h2>
+                <h2>Sign Up</h2>
             <TextField 
             id="outlined-basic" 
             label="Username"
@@ -64,7 +64,7 @@ const movieValidationShema = yup.object({
   {touched.password && errors.password ? errors.password : null}
             <Button  color={formState}
             type="submit" variant="contained">
-                {formState ==="error"?"Retry":"Sign in"}
+                {formState ==="error"?"Retry":"Sign Up"}
                 </Button>
             </form>
     </div>

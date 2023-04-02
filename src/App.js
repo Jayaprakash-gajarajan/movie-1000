@@ -126,6 +126,7 @@ function App() {
               <Button color="inherit" onClick={() => navigate("/")}>Home</Button>
               <Button color="inherit" onClick={() => navigate("/movies")}>Movie</Button>
               <Button color="inherit" onClick={() => navigate("/add-movie")}>Add Movie</Button>
+              <Button color="inherit" onClick={() => navigate("/update/:id")}>Edit Movie</Button>
               <Button color="inherit" onClick={() => navigate("/color")}>Color Game</Button>
               <Button style={dk} color="inherit" startIcon={mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
                 onClick={() => setMode(mode === "light" ? "dark" : "light")}>Dark Mode</Button>
@@ -137,29 +138,127 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             {/* <Route path="/flims" element={<Navigate replace to="/movies" />} /> */}
-            <Route path="/add-movie" element={<AddMovie />} />
+            <Route path="/add-movie" element={
+              <ProdectedRoute>
+              <AddMovie />
+              </ProdectedRoute>} />
             <Route path="/movies" element={<MovieList />} />
             <Route path="/color" element={
-            <ProdectedRoute>
             <AddColor />
-            </ProdectedRoute>
             } />
             <Route path="/movies/:id" element={<MovieDetail />} />
             <Route path=" /edit/:id" element={<Edit />} />
             <Route path="*" element={<NotFound />} />
             <Route path='/login' element={<Login/>}></Route>
             <Route path='/signup'element={<Signin/>}></Route>
+            <Route path='update/:id' element={
+            <ProdectedRoute>
+            <Edit/>
+            </ProdectedRoute>
+          }></Route>
           </Routes>
         </div>
       </Paper>
     </ThemeProvider >
   );
 }
-function Edit() {
-  return (
+function Edit(){
+  const { id } = useParams();
+  const [details, setDetails] = useState(null);
+  useEffect(() => {
+    fetch(`${API_URL}/${id}`, {
+      method: "GET",
+    })
+      .then((data) => data.json())
+      .then((mv) => setDetails(mv));
+  }, []);
+
+   console.log(details)
+  return(
     <div>
-      <h1>Here you can edit the movie</h1>
+      {details ? <Update details={details} /> : "Loading..."}
     </div>
+  )
+}
+function Update({details}) {
+  const { handleSubmit, values, handleChange, handleBlur, touched, errors } =
+  useFormik({
+    initialValues: {
+      name: details.name,
+      poster: details.poster,
+      rating: details.rating,
+      summary: details.summary,
+      trailer: details.trailer,
+      
+    },
+    validationSchema: movieValidationShema,
+    onSubmit: (update) => {
+       console.log("Form values:", update);
+      updateUser(update);
+    },
+  });
+
+const navigate = useNavigate();
+
+const updateUser = (update)=>{
+  fetch(`${API_URL}/${details.id}`,{
+    method:"PUT",
+    body:JSON.stringify(update),
+    headers:{"Content-type":"application/json"},
+  }).then(()=>navigate("/movies"));
+  // navigate("/read")
+};
+  return (
+    <form onSubmit={handleSubmit} className='add-movie-form'>
+      <TextField
+        label="name"
+        variant='outlined'
+        name="name"
+        value={values.name}
+        onChange={handleChange}onBlur={handleBlur}
+      />
+      {touched.name && errors.name ? errors.name : null}
+      <TextField
+        label="poster"
+        variant='outlined'
+        name="poster"
+        value={values.poster}
+        onChange={handleChange}
+        onBlur={handleBlur}
+      />
+      {touched.poster && errors.poster ? errors.poster : null}
+
+      <TextField
+        label="rating"
+        variant='outlined'
+        name="rating"
+        value={values.rating}
+        onChange={handleChange}
+        onBlur={handleBlur}
+      />
+      {touched.rating && errors.rating ? errors.rating : null}
+
+      <TextField
+        label="summary"
+        variant='outlined'
+        name="summary"
+        value={values.summary}
+        onChange={handleChange}
+        onBlur={handleBlur}
+      />
+      {touched.summary && errors.summary ? errors.summary : null}
+      <TextField
+        label="trailer"
+        variant='outlined'
+        value={values.trailer}
+        name="trailer"
+        onChange={handleChange}
+        onBlur={handleBlur}
+      />
+      {touched.trailer && errors.trailer ? errors.trailer : null}
+
+      <Button type="submit" variant='contained'onClick={updateUser}>Update Movie</Button>
+    </form>
   )
 }
 function Home() {
@@ -211,7 +310,7 @@ function MovieList() {
             <Movie movie={mv}
               id={mv._id}
               editButton={
-                <IconButton style={st} color='secondary' onClick={() => navigate(`movies/edit/${mv._id}`)}><EditIcon /></IconButton>}
+                <IconButton style={st} color='secondary' onClick={() => navigate(`/update/${mv.id}`)}><EditIcon /></IconButton>}
               deleteButton={
                 <IconButton style={st} color='error' onClick={() => deleteMovie(mv.id)}><DeleteIcon /></IconButton>}
             />
@@ -313,7 +412,7 @@ function Movie({ movie, id, deleteButton, editButton }) {
         {show ? <p className='movie__summary'>{movie.summary}</p> : null}
       </CardContent>
       <CardActions>
-        <Count />{deleteButton}
+        <Count />{editButton}{deleteButton}
 
       </CardActions>
 
@@ -356,7 +455,7 @@ const movieValidationShema = yup.object({
   name: yup.string().required(),
   poster: yup.string().required().min(4),
   rating: yup.number().required().min(0).max(10),
-  summary: yup.string().required().max(20),
+  summary: yup.string().required().max(200),
   trailer: yup.string().required().min(4).url(),
 })
 
@@ -472,7 +571,7 @@ function Login() {
               console.log("success",result);
               localStorage.setItem("token",result.token)
               localStorage.setItem("roleId",result.roleId)
-              navigate("/color")
+              navigate("/add-movie")
           }
         
       },
