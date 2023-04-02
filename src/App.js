@@ -552,7 +552,7 @@ function Login() {
   const [formState,setFormState]=useState("success");
   const navigate=useNavigate();
   const {handleChange,values,handleSubmit}=useFormik({
-      initialValues:{username:"prakash",password:"123"},
+      initialValues:{username:"",password:""},
       onSubmit:async(values)=>{
           console.log(values);
        const data = await fetch(API+"/"+"login",{
