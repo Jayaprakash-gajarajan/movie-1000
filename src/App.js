@@ -270,7 +270,10 @@ const updateUser = (update)=>{
 function Home() {
   return (
     <div className='home'>
-      Welcome to the App
+      Welcome to this site
+      <div>
+      <img src='https://tse2.mm.bing.net/th?id=OIP.ID3iblGm9eqbUKu--JZUPQHaFe&pid=Api&P=0'style={{marginTop:"40px",width:"600px"}}></img>
+    </div>
     </div>
   )
 }
@@ -622,7 +625,7 @@ return (
               </Button>
           </form>
           <div className='logout'>
-          <Button onClick={()=>logout()}>logout</Button>
+          <Button onClick={()=>logout()}>Logout</Button>
           </div>
       </div>
 )
