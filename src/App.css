@@ -32,7 +32,14 @@
 .movie__name {
   font-size: 24px;
 }
-
+.eye{
+  width: 15px;
+  position: absolute;
+  right:18%;
+  top:46.8%;
+  left:60%;
+ 
+}
 .movie__poster {
   height: 640px;
   width: 100%;

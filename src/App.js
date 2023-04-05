@@ -29,6 +29,7 @@ import Signin from './Signin';
 import { API } from './global';
 import axios from 'axios';
 import { API_URL } from './global';
+import {FaEye, FaEyeSlash} from 'react-icons/fa'
 const MOVIE = [
   {
     "id": "99",
@@ -554,6 +555,18 @@ function AddMovie() {
 
 
 function Login() {
+  const handleToggle=()=>{
+    if(passwordType==="password"){
+      setPasswordType("text");
+      setPasswordIcon(<FaEye/>)
+    }
+    else{
+      setPasswordType("password");
+      setPasswordIcon(<FaEyeSlash/>)
+    }
+  }
+      const [passwordType,setPasswordType]=useState("password");
+      const [passwordIcon,setPasswordIcon]=useState(<FaEyeSlash/>);
   const [formState,setFormState]=useState("success");
   const navigate=useNavigate();
   const {handleChange,values,handleSubmit}=useFormik({
@@ -595,13 +608,14 @@ return (
            /> 
 
          <TextField id="outlined-basic"
+         type={passwordType}
           label="Password" 
           variant="outlined" 
           onChange={handleChange} 
           value={values.password}
           name="password"
           />   
-
+<span className="eye" onClick={handleToggle}>{passwordIcon}</span>
           <Button  color={formState}
           type="submit" variant="contained">
               {formState ==="error"?"Retry":"Submit"}
