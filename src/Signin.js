@@ -1,4 +1,5 @@
 import React from 'react'
+import './Signin.css'
 import * as yup from 'yup';
 import { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
@@ -26,7 +27,7 @@ const movieValidationShema = yup.object({
     const [formState,setFormState]=useState("success");
     const navigate=useNavigate();
     const {handleChange,values,handleSubmit,handleBlur, touched, errors}=useFormik({
-        initialValues:{username:"",password:""},
+        initialValues:{username:"",email:"",password:""},
         validationSchema: movieValidationShema,
         onSubmit:async(values)=>{
             console.log(values);
@@ -55,32 +56,35 @@ const movieValidationShema = yup.object({
   return (
     <div>
       <form onSubmit={handleSubmit} className="login-form" >
-                <h2>Sign Up</h2>
-            <TextField 
-            id="outlined-basic" 
-            label="Username"
-             variant="outlined"
-             onChange={handleChange} 
-             onBlur={handleBlur}
-             value={values.username}
-             name="username"
-             /> 
-  {touched.username && errors.username ? errors.username : null}
-           <TextField id="outlined-basic"
-           type={passwordType}
-            label="Password" 
-            variant="outlined" 
-            onChange={handleChange} 
-            value={values.password}
-            onBlur={handleBlur}
-            name="password"
-            />   
-            <span className="eye" onClick={handleToggle}>{passwordIcon}</span>
-  {touched.password && errors.password ? errors.password : null}
-            <Button  color={formState}
-            type="submit" variant="contained">
-                {formState ==="error"?"Retry":"Sign Up"}
-                </Button>
+      <div className='main'>
+      <input type='checkbox' id='chk' aria-hidden="true"></input>
+      <div className='signup'> 
+        <label for="chk" >Sign up</label>
+        <input type='text'
+          placeholder='Username'
+           required=""
+           onChange={handleChange}
+           onBlur={handleBlur}
+           value={values.username}
+           name='username'
+           ></input>
+        <input type='email'
+         name='email' placeholder='Email' 
+         required=""
+         onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.email}
+         ></input>
+        <input type={passwordType} name='password'
+         placeholder='Password' required=""
+         onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.password}
+         ></input>
+     <span className="signup__eye" onClick={handleToggle}>{passwordIcon}</span> 
+        <button id='button' type='submit'>Sign up</button>
+      </div>
+     </div>
             </form>
     </div>
   )

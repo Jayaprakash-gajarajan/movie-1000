@@ -26,6 +26,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import Signin from './Signin';
+import'./Signin.css'
 import { API } from './global';
 import axios from 'axios';
 import { API_URL } from './global';
@@ -572,8 +573,8 @@ function Login() {
       const [passwordIcon,setPasswordIcon]=useState(<FaEyeSlash/>);
   const [formState,setFormState]=useState("success");
   const navigate=useNavigate();
-  const {handleChange,values,handleSubmit}=useFormik({
-      initialValues:{username:"",password:""},
+  const {handleChange,values,handleBlur,handleSubmit}=useFormik({
+      initialValues:{username:"",email:"",password:""},
       onSubmit:async(values)=>{
           console.log(values);
        const data = await fetch(API+"/"+"login",{
@@ -600,32 +601,38 @@ function Login() {
 return (
   <div>
      <form onSubmit={handleSubmit} className="login-form" >
-              <h2>Login</h2>
-          <TextField 
-          id="outlined-basic" 
-          label="Username"
-           variant="outlined"
-           onChange={handleChange} 
-           value={values.username}
-           name="username"
-           /> 
-
-         <TextField id="outlined-basic"
-         type={passwordType}
-          label="Password" 
-          variant="outlined" 
-          onChange={handleChange} 
+     <div className='login'>   
+        <label for="chk" className='login__label'>Login</label>
+        <input type='text' 
+         placeholder='Username'
+          required=""
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.username}
+          name='username'
+          ></input>
+          <input type='email' 
+         placeholder='Email'
+          required=""
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.email}
+          name='email'
+          ></input>
+        <input type={passwordType} 
+        name='password'
+         placeholder='Password'
+          required=""
+          onChange={handleChange}
+          onBlur={handleBlur}
           value={values.password}
-          name="password"
-          />   
-<span className="eye" onClick={handleToggle}>{passwordIcon}</span>
-          <Button  color={formState}
-          type="submit" variant="contained">
-              {formState ==="error"?"Retry":"Submit"}
-              </Button>
+          ></input>
+          <span className="eye" onClick={handleToggle}>{passwordIcon}</span> 
+        <button id='button' type='submit'>Login</button>
+        <Button style={{marginLeft:"170px"}} onClick={()=>logout()}>Logout</Button>
+      </div>
           </form>
           <div className='logout'>
-          <Button onClick={()=>logout()}>Logout</Button>
           </div>
       </div>
 )
