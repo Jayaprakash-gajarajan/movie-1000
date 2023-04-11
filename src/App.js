@@ -559,6 +559,7 @@ function AddMovie() {
 
 
 function Login() {
+  const roleId=localStorage.getItem("roleId")
   const handleToggle=()=>{
     if(passwordType==="password"){
       setPasswordType("text");
@@ -629,7 +630,7 @@ return (
           ></input>
           <span className="eye" onClick={handleToggle}>{passwordIcon}</span> 
         <button id='button' type='submit'>Login</button>
-        <Button style={{marginLeft:"170px"}} onClick={()=>logout()}>Logout</Button>
+       {roleId?<Button style={{marginLeft:"170px"}} onClick={()=>logout()}>Logout</Button>:null}
       </div>
           </form>
           <div className='logout'>
@@ -639,6 +640,7 @@ return (
 }
 function logout() {
   localStorage.removeItem("token")
+  localStorage.removeItem("roleId")
   window.location.href = "/";
 
 }
