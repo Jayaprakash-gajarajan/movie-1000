@@ -134,7 +134,7 @@ function App() {
               <Button style={dk} color="inherit" startIcon={mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
                 onClick={() => setMode(mode === "light" ? "dark" : "light")}>Dark Mode</Button>
          {roleId? null:<Button color="inherit" onClick={() => navigate("/signup")}>Signup</Button>}
-            {roleId?<Button color="inherit" style={dk} onClick={()=>logout()}>Logout</Button >: <Button color="inherit" onClick={() => navigate("/login")}>Login</Button>}
+            {roleId ?<Button color="inherit" style={dk} onClick={()=>logout()}>Logout</Button >: <Button color="inherit" onClick={() => navigate("/login")}>Login</Button>}
             </Toolbar>
           </AppBar>
 
