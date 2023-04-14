@@ -1,12 +1,19 @@
+ *{
+    
+    box-sizing: border-box;
+  }
 
 .App {
-  margin: 0;
-  padding: 0;
-
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+label{
+  margin: 0 !important;
 }
 .home{
-  background-image: url("https://tse2.mm.bing.net/th?id=OIP.TN4LHOgnY4QNSbAnMoiEKgHaFj&pid=Api&P=0");
-  min-width:100vw;
+ background-image: url("https://tse4.mm.bing.net/th?id=OIP.h6AbpJN-Q-QdDgMk55qbFgHaEK&pid=Api&P=0");
+ min-width:100vw;
  min-height: 100vh; 
  background-size: cover;
  background-position: center;

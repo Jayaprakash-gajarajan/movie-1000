@@ -271,9 +271,8 @@ const updateUser = (update)=>{
 function Home() {
   return (
     <div className='home'>
-      Welcome to this site
       <div>
-      <img src='https://tse2.mm.bing.net/th?id=OIP.ID3iblGm9eqbUKu--JZUPQHaFe&pid=Api&P=0'style={{marginTop:"40px",width:"600px"}}></img>
+      {/* <img src='https://tse1.mm.bing.net/th?id=OIP.F5Rm3iDuJpIvmyMJ_Np8bgHaDB&pid=Api&P=0'style={{marginTop:"40px",width:"600px"}}></img> */}
     </div>
     </div>
   )
