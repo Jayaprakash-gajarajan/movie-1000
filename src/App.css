@@ -1,9 +1,16 @@
 
 .App {
-  margin-top: 20px;
-  margin-left: 20px;
-  margin-right: 20px;
+  margin: 0;
+  padding: 0;
 
+}
+.home{
+  background-image: url("https://tse2.mm.bing.net/th?id=OIP.TN4LHOgnY4QNSbAnMoiEKgHaFj&pid=Api&P=0");
+  min-width:100vw;
+ min-height: 100vh; 
+ background-size: cover;
+ background-position: center;
+ background-repeat: no-repeat;
 }
 
 .movie-detail-container {
@@ -17,16 +24,16 @@
   max-width: 400px;
   margin: 0 auto ;
 }
-.home {
+/* .home {
   height: 100vh;
   font-weight: bold;
   font-size: 40px;
   text-align: center;
   margin-top: 40px;
-}
+} */
 
 .movie__container {
-
+margin: 10px;
   width: 340px;
 }
 
